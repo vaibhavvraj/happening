@@ -1,0 +1,258 @@
+/* ==========================================================================
+   layout.css
+   Site header (navbar), reminders panel and footer. Loaded on every page.
+   ========================================================================== */
+
+/* Header ----------------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.logo-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: ping 2s infinite;
+}
+
+@keyframes ping {
+  70% {
+    box-shadow: 0 0 0 9px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 16px;
+}
+
+.site-nav a {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--muted);
+}
+
+.site-nav a:hover {
+  color: var(--ink);
+}
+
+.site-nav a[aria-current="page"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-user-name {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Written as .btn.nav-toggle so it beats .btn (components.css loads later). */
+.btn.nav-toggle {
+  display: none;
+}
+
+/* Reminders panel (opens from the bell button) */
+
+.notif-panel {
+  position: absolute;
+  right: var(--gutter);
+  top: 100%;
+  z-index: 30;
+  width: min(360px, calc(100vw - 32px));
+  max-height: 70vh;
+  overflow: auto;
+  margin-top: 8px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.notif-item {
+  display: grid;
+  gap: 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+}
+
+.notif-item:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Header on small screens: the nav collapses behind a Menu button */
+
+@media (max-width: 820px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding-block: 10px;
+  }
+
+  .logo {
+    order: 1;
+  }
+
+  .nav-actions {
+    order: 2;
+  }
+
+  .btn.nav-toggle {
+    order: 3;
+    display: inline-flex;
+  }
+
+  .site-nav {
+    order: 4;
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+    padding-bottom: 6px;
+  }
+
+  .site-nav.is-open {
+    display: flex;
+  }
+
+  .nav-user-name {
+    display: none;
+  }
+}
+
+/* Very small phones: keep logo, bell, log in and menu on one row */
+
+@media (max-width: 480px) {
+  .nav-login-extra {
+    display: none;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .navbar {
+    gap: 8px;
+  }
+
+  .navbar .btn {
+    padding-inline: 12px;
+  }
+}
+
+/* Footer ----------------------------------------------------------------- */
+
+.site-footer {
+  margin-top: 40px;
+  background: var(--footer-bg);
+  color: var(--footer-ink);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  padding-block: 48px 32px;
+}
+
+.footer-brand {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.footer-brand p {
+  max-width: 34ch;
+  color: var(--footer-muted);
+}
+
+.footer-col {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.footer-col h3 {
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--footer-muted);
+}
+
+.footer-col a {
+  text-decoration: none;
+  width: fit-content;
+}
+
+.footer-col a:hover {
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  padding-block: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--footer-muted);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 760px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+}

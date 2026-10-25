@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Create an event | Happening</title>
+  <meta name="description" content="List your event on Happening so people nearby can find it.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/forms.css">
+</head>
+
+<body data-page="create">
+  <header id="site-header"></header>
+
+  <main class="container form-page">
+    <!-- Shown to anyone who is not logged in as an organiser -->
+    <div id="gate" class="panel">
+      <h1>Organisers only</h1>
+      <p class="muted">Sign up or log in as an organiser to list an event.</p>
+      <div>
+        <a class="btn btn-primary" href="login.html?mode=signup&amp;role=organiser">Sign up / Log in</a>
+      </div>
+    </div>
+
+    <div id="form-area" hidden>
+      <h1>List an event</h1>
+      <p class="muted">People near you will see this on Happening. You handle sign-ups and payment yourself.</p>
+
+      <form id="event-form" class="form" novalidate style="margin-top:20px">
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" maxlength="80" placeholder="Weekend trek to Rajgir hills">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category"></select>
+          </div>
+          <div class="field">
+            <label for="city">City</label>
+            <select id="city"></select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="area">Area</label>
+            <input id="area" placeholder="Kankarbagh">
+          </div>
+          <div class="field">
+            <label for="venue">Venue</label>
+            <input id="venue" placeholder="Patna Sports Ground">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="date">Date</label>
+            <input id="date" type="date">
+          </div>
+          <div class="field">
+            <label for="time">Start time</label>
+            <input id="time" type="time" value="18:00">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fee">Event fee in &#8377;</label>
+          <input id="fee" type="number" min="0" step="10" value="0">
+          <span class="hint">Enter 0 for a free event.</span>
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" rows="5" placeholder="What will happen, who it is for, what to bring."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="photos">Photos</label>
+          <input id="photos" type="file" accept="image/*" multiple>
+          <div id="photo-previews" class="photo-previews"></div>
+          <span class="hint">Up to 4 photos. The first one becomes the cover.</span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="organiser-name">Organiser name</label>
+            <input id="organiser-name">
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" type="tel" placeholder="+91 ...">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com">
+          <span class="hint">Add at least a phone or an email so people can ask you questions.</span>
+        </div>
+
+        <div id="form-error" class="form-error" role="alert"></div>
+
+        <div>
+          <button class="btn btn-primary btn-large" type="submit">Publish event</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/helpers.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/create.js"></script>
+</body>
+</html>

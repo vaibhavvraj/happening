@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sign up or log in | Happening</title>
+  <meta name="description" content="Create a Happening account to list events or save the ones you like.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/forms.css">
+</head>
+
+<body data-page="login">
+  <header id="site-header"></header>
+
+  <main class="container auth-page">
+    <div class="panel auth-card">
+      <div class="auth-tabs" role="tablist" aria-label="Account">
+        <button type="button" role="tab" data-mode="signup" aria-selected="false">Sign up</button>
+        <button type="button" role="tab" data-mode="login" aria-selected="true">Log in</button>
+      </div>
+
+      <h1 id="auth-title">Welcome back</h1>
+
+      <form id="auth-form" class="form" novalidate>
+        <div class="field" data-signup-only hidden>
+          <label for="name">Your name</label>
+          <input id="name" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" required>
+        </div>
+
+        <fieldset class="field" data-signup-only hidden>
+          <legend>I am joining as</legend>
+          <div class="role-options">
+            <label class="role-option">
+              <input type="radio" name="role" value="user" checked>
+              <strong>Just here to browse</strong>
+              <span>Find and save events</span>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="role" value="organiser">
+              <strong>Organiser</strong>
+              <span>List my own events</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div id="auth-error" class="form-error" role="alert"></div>
+
+        <button id="auth-submit" class="btn btn-primary btn-large" type="submit">Log in</button>
+
+        <p class="hint">
+          Demo only: your account is saved in this browser, not on a server.
+          Please do not reuse a real password.
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/helpers.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

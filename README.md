@@ -4,33 +4,58 @@ Know what's happening around you, so there's nothing to miss.
 
 Happening is a place to discover upcoming events in your city: hackathons, cultural programs, social gatherings, social welfare work and more. It is not a booking platform. It helps people, especially those new to a city, find things to do and meet people.
 
-## Prototype
+This is a front-end prototype built with plain HTML, CSS and JavaScript. There is nothing to install or build. Open `index.html` in a browser, or host the folder on GitHub Pages.
 
-`index.html` is a single-file, front-end-only prototype. Open it in a browser; there is nothing to install.
+## Pages
 
-### Roles
-- **Organiser**: create events (title, category, city, area, venue, date, time, fee, description, up to 4 photos, contact details) and see them under My events.
-- **Just here to browse**: discover, save and share events.
+| Page | What it does |
+| --- | --- |
+| `index.html` | Home: hero, what Happening does, upcoming events, categories, how it works, get started |
+| `events.html` | Browse events with search and filters (city, date, free or paid, category) |
+| `event.html?id=...` | Event details: photos, fee, interested, good vibes, share, reminder, organiser contact, more events in the same city |
+| `login.html` | Sign up (organiser or just browsing) and log in |
+| `create.html` | Organisers create an event (title, description, photos, fee, contact) |
+| `my-events.html` | Organisers see and delete the events they listed |
 
-### Features
-- Search, plus filters for city, date (today, tomorrow, this week, weekend, next 30 days), free or paid, and category
-- Interested button with a count
-- "Good vibes" reaction (a placeholder for the like button; name still to be decided)
-- Share (copies the event details)
-- Reminders (1 day or 2 hours before), shown in an in-app bell panel
-- Get more info: the organiser's contact details
-- "More events in [city]" at the bottom of each event
-- Light and dark themes
+## Project structure
 
-### Limits of the prototype
-Data is stored in the browser's localStorage, so events created by organisers are visible only to that browser. Sample events are hard-coded. Reminders do not send phone or email notifications.
+```
+index.html, events.html, event.html, login.html, create.html, my-events.html
+
+css/
+  base.css         design tokens, reset, typography
+  layout.css       navbar, reminders panel, footer
+  components.css   buttons, pills, event cards, panels, toast
+  home.css         home page only
+  events.css       events and event detail pages
+  forms.css        login, create and my events pages
+
+js/
+  data.js          categories, cities, sample events
+  store.js         localStorage: preferences, events, demo accounts
+  helpers.js       escaping, formatting, URL params, toast, clipboard
+  components.js    icons, event card, empty state
+  layout.js        builds the navbar and footer on every page
+  home.js, events.js, event.js, create.js, my-events.js, login.js   one per page
+```
+
+Scripts are loaded in this order on every page: `data`, `store`, `helpers`, `components`, `layout`, then the page's own script. They share one `window.Happening` object.
+
+## Limits of the prototype
+
+- Data is stored in the browser's localStorage, so events created by organisers are visible only on that device.
+- Accounts are a demo. Passwords are salted and hashed in the browser, but nothing is sent to a server. Do not use a real password.
+- Reminders appear in the bell panel. They do not send phone or email notifications.
+- Interested and good vibes counts are per device on top of the sample numbers.
 
 ## Roadmap
-- Database and organiser accounts, so events are shared between everyone
-- Real notifications (push or email) for reminders
-- Comments on events
-- Event moderation and reporting
+
+- A database and real accounts, so events are shared between everyone
+- Push or email notifications for reminders
+- Comments on events (the "Good vibes" button is a placeholder name for the like feature)
+- Moderation and reporting
 - Location-based discovery
 
 ## Hosting
-To publish the prototype, enable GitHub Pages: Settings, Pages, deploy from the `main` branch root.
+
+GitHub Pages: Settings, Pages, deploy from the `main` branch, root folder.

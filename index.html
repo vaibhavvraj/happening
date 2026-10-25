@@ -1,380 +1,182 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Happening</title>
-<meta name="description" content="Discover events, gatherings, hackathons and cultural programs happening around you.">
-<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
-<style>
-/* Layout: sticky top bar, filter strip, card grid; detail and organiser views replace the grid. Ticket-stub date blocks tie it to events. */
-:root{
-  --bg:#f1f3f6; --surface:#ffffff; --ink:#0f1623; --muted:#5b6578; --line:#dde2ea;
-  --accent:#e8400f; --accent-ink:#ffffff; --accent-soft:#fde8e0;
-  --free:#0b6b43; --free-soft:#dff3e8; --paid:#7a4a00; --paid-soft:#fbeccd;
-  --deep:#0c3b3f; --shadow:0 1px 2px rgba(15,22,35,.06),0 8px 24px rgba(15,22,35,.06);
-  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
-  --font-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0d1117; --surface:#161c26; --ink:#eef1f6; --muted:#9aa5b8; --line:#263041;
-  --accent:#ff6a3d; --accent-ink:#1a0a04; --accent-soft:#3a1d12;
-  --free:#4fd69a; --free-soft:#12362a; --paid:#f2b84b; --paid-soft:#3a2d10;
-  --deep:#7fd6d0; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0d1117; --surface:#161c26; --ink:#eef1f6; --muted:#9aa5b8; --line:#263041;
-  --accent:#ff6a3d; --accent-ink:#1a0a04; --accent-soft:#3a1d12;
-  --free:#4fd69a; --free-soft:#12362a; --paid:#f2b84b; --paid-soft:#3a2d10;
-  --deep:#7fd6d0; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark}
-*{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
-h1,h2,h3{font-family:var(--font-display);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
-button,input,select,textarea{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
-.wrap{max-width:1100px;margin:0 auto}
-/* top bar */
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px))}
-.top .wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.logo{font-family:var(--font-display);font-weight:800;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-right:auto;background:none;border:0;padding:0}
-.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent);animation:ping 2s infinite}
-@keyframes ping{70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
-@media (prefers-reduced-motion:reduce){.dot{animation:none}}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;min-height:38px}
-.btn:hover{border-color:var(--ink)}
-.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
-.btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.btn.on.vibe{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.badge{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:.72rem;font-weight:700;padding:0 6px;min-width:18px;text-align:center}
-.nav{display:flex;gap:6px}
-/* hero + filters */
-.hero{padding:26px 0 14px;display:grid;gap:8px}
-.hero h1{font-size:clamp(1.9rem,5vw,3.1rem);font-weight:800;max-width:18ch}
-.hero p{margin:0;color:var(--muted);max-width:56ch}
-.search{position:relative;margin:10px 0 12px}
-.search input{width:100%;padding:13px 16px 13px 44px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:1rem}
-.search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted)}
-.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.sel{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 12px;min-height:38px;max-width:100%}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px}
-.seg button{border:0;background:none;padding:5px 12px;border-radius:999px;font-weight:500}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:thin}
-.chip{white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-weight:500}
-.chip[aria-pressed="true"]{background:var(--deep);color:var(--bg);border-color:var(--deep)}
-.count{color:var(--muted);margin:14px 0 10px}
-/* cards */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;min-width:0;box-shadow:var(--shadow);transition:transform .15s}
-.card:hover{transform:translateY(-3px)}
-@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
-.cover{height:150px;position:relative;background-size:cover;background-position:center;color:#fff}
-.stub{position:absolute;left:12px;top:12px;background:#fff;color:#0f1623;border-radius:10px;padding:4px 10px;text-align:center;line-height:1.1;font-family:var(--font-display);box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.stub b{display:block;font-size:1.35rem}
-.stub span{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
-.cat{position:absolute;left:12px;bottom:10px;background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:500}
-.body{padding:14px;display:grid;gap:6px;flex:1;align-content:start}
-.body h3{font-size:1.15rem}
-.meta{color:var(--muted);font-size:.88rem}
-.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
-.pill{border-radius:999px;padding:2px 10px;font-weight:700;font-size:.8rem}
-.pill.free{background:var(--free-soft);color:var(--free)}
-.pill.paid{background:var(--paid-soft);color:var(--paid)}
-.empty{border:2px dashed var(--line);border-radius:16px;padding:36px 18px;text-align:center;color:var(--muted)}
-.empty b{display:block;color:var(--ink);font-family:var(--font-display);font-size:1.2rem;margin-bottom:4px}
-/* detail */
-.back{margin:18px 0 12px}
-.detail{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:start}
-@media (max-width:820px){.detail{grid-template-columns:minmax(0,1fr)}}
-.hero-img{height:300px;border-radius:18px;position:relative;background-size:cover;background-position:center;color:#fff;overflow:hidden}
-@media (max-width:520px){.hero-img{height:210px}}
-.thumbs{display:flex;gap:8px;margin-top:8px;overflow-x:auto}
-.thumbs button{width:72px;height:54px;border-radius:10px;border:2px solid transparent;background-size:cover;background-position:center;flex:none;padding:0}
-.thumbs button[aria-current="true"]{border-color:var(--accent)}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:12px;box-shadow:var(--shadow)}
-.panel h1{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800}
-.facts{display:grid;gap:8px;margin:0;padding:0;list-style:none}
-.facts li{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px}
-.facts span:first-child{color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
-.actions{display:flex;flex-wrap:wrap;gap:8px}
-.desc{white-space:pre-line;max-width:65ch}
-.contact{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:6px}
-.contact code{background:var(--bg);padding:2px 8px;border-radius:8px;user-select:all;word-break:break-all}
-.soon{color:var(--muted);font-size:.88rem;border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
-.more{margin-top:34px}
-.more h2{font-size:1.5rem;margin-bottom:12px}
-/* form */
-.form{display:grid;gap:14px;max-width:680px}
-.form h1{font-size:2rem}
-.field{display:grid;gap:5px}
-.field label,.field legend{font-weight:700;font-size:.9rem}
-.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.hint{color:var(--muted);font-size:.85rem}
-.previews{display:flex;gap:8px;flex-wrap:wrap}
-.previews div{width:84px;height:64px;border-radius:10px;background-size:cover;background-position:center}
-.err{color:var(--accent);font-weight:700;min-height:1.2em}
-/* panels, picker, toast */
-.pop{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(64px + env(safe-area-inset-top,0px));width:min(360px,calc(100vw - 32px));z-index:40;max-height:70vh;overflow:auto}
-.pop .panel{gap:8px}
-.n-item{display:grid;gap:2px;border-top:1px solid var(--line);padding-top:8px;text-align:left;background:none;border-left:0;border-right:0;border-bottom:0}
-.n-item:first-of-type{border-top:0;padding-top:0}
-.scrim{position:fixed;inset:0;background:rgba(8,12,20,.6);z-index:50;display:grid;place-items:center;padding:16px;overflow:auto}
-.picker{background:var(--surface);border-radius:22px;max-width:560px;width:100%;padding:26px;display:grid;gap:16px}
-.picker h2{font-size:2rem;font-weight:800}
-.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.opt{border:2px solid var(--line);background:var(--bg);border-radius:16px;padding:16px;text-align:left;display:grid;gap:4px}
-.opt:hover{border-color:var(--accent)}
-.opt b{font-family:var(--font-display);font-size:1.2rem}
-.opt span{color:var(--muted);font-size:.9rem}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;z-index:60;font-weight:500;max-width:calc(100vw - 32px)}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Happening | Know what's happening around you</title>
+  <meta name="description" content="Discover events, gatherings, hackathons and cultural programs happening in your city. Happening is not a booking site. It shows you what is on so you can show up.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/home.css">
 </head>
-<body>
-<div id="app"></div>
 
-<script>
-(function(){
-"use strict";
-var DAY=864e5;
-function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-function store(k,v){try{if(v===undefined){var r=localStorage.getItem(k);return r?JSON.parse(r):null}localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
-var today=new Date();today.setHours(0,0,0,0);
-function at(off,h,m){return today.getTime()+off*DAY+h*36e5+(m||0)*6e4}
+<body data-page="home">
+  <header id="site-header"></header>
 
-var CATS={
-  "Hackathon":"linear-gradient(135deg,#0c3b3f,#1f7a6f 60%,#7fd6a8)",
-  "Cultural":"linear-gradient(135deg,#7a1f3d,#d6462f 60%,#f5a94a)",
-  "Social meetup":"linear-gradient(135deg,#1c2b6b,#3b6fd6 60%,#8fc3ff)",
-  "Welfare":"linear-gradient(135deg,#2d5a1b,#6aa338 60%,#d3e68a)",
-  "Workshop":"linear-gradient(135deg,#4a2a6b,#9a55c9 60%,#e0b3f0)",
-  "Sports & fitness":"linear-gradient(135deg,#8a2b00,#e8650f 60%,#ffd08a)"
-};
-var CITIES=["Bengaluru","Delhi","Kolkata","Mumbai","Patna","Pune"];
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Events, gatherings and causes near you</p>
+          <h1>Know what's happening around you.</h1>
+          <p class="hero-lead">
+            Hackathons, cultural nights, meetups and community work, all in one place.
+            Happening is not a booking site. It shows you what is on, so you can show up and meet people.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-large" href="events.html">Explore events</a>
+            <a class="btn btn-large" id="hero-organiser" href="login.html?mode=signup&amp;role=organiser">List your event</a>
+          </div>
+          <p class="hero-note">Free to browse. No tickets, no checkout.</p>
+        </div>
 
-var seed=[
- {id:"s1",title:"Build for Bharat 24-hour Hackathon",cat:"Hackathon",city:"Bengaluru",area:"Indiranagar",venue:"The Hive Coworking, 100 Feet Road",start:at(5,9),fee:0,interested:212,vibes:96,org:{name:"BangaloreDevs",phone:"+91 80000 11122",email:"hello@bangaloredevs.example"},desc:"Teams of up to four build something useful for a real local problem in 24 hours.\nMentors from product companies, free meals and a demo round at the end.\nSolo participants get matched into teams at the start, so you can come alone."},
- {id:"s2",title:"Sunday Board Games & Chai",cat:"Social meetup",city:"Bengaluru",area:"Koramangala",venue:"Third Wave Cafe, 5th Block",start:at(0,19,30),fee:150,interested:48,vibes:30,org:{name:"Newcomers Club",phone:"+91 80000 33344",email:"play@newcomers.example"},desc:"New in town? Come play Catan, Uno and Codenames with friendly strangers.\nFee covers one chai and a snack. Games are provided."},
- {id:"s3",title:"Lakeside Cleanup Drive",cat:"Welfare",city:"Bengaluru",area:"Bellandur",venue:"Bellandur Lake, Gate 2",start:at(6,7,30),fee:0,interested:134,vibes:88,org:{name:"Green Hands",phone:"+91 80000 55566",email:"join@greenhands.example"},desc:"Two hours of collecting waste along the lake edge. Gloves, bags and breakfast are provided.\nWear closed shoes and bring a water bottle."},
- {id:"s4",title:"Classical Sitar Evening",cat:"Cultural",city:"Delhi",area:"Lodhi Road",venue:"India Habitat Centre, Amphitheatre",start:at(2,18,45),fee:300,interested:76,vibes:61,org:{name:"Raag Collective",phone:"+91 11000 77788",email:"tickets@raag.example"},desc:"An unplugged evening of sitar and tabla with two emerging artists.\nSeating is open. Tickets are sold at the venue gate."},
- {id:"s5",title:"Dilli Street Food Walk",cat:"Social meetup",city:"Delhi",area:"Old Delhi",venue:"Meet at Jama Masjid Gate 1",start:at(6,16),fee:499,interested:91,vibes:70,org:{name:"Walk Dilli",phone:"+91 11000 99900",email:"walks@walkdilli.example"},desc:"A three-hour guided walk through the lanes, with seven tasting stops and a local storyteller. Groups are capped at 12, which makes it easy to meet people."},
- {id:"s6",title:"Open Mic: Poetry in Hindi & English",cat:"Cultural",city:"Patna",area:"Boring Road",venue:"Cafe Pind Balluchi Terrace",start:at(3,18),fee:0,interested:64,vibes:52,org:{name:"Patna Pen Club",phone:"+91 61200 12121",email:"pen@patnapen.example"},desc:"Read your own work or just listen. Five minutes per poet, sign-up at the door.\nAll languages welcome."},
- {id:"s7",title:"Weekend Cricket Nets for Beginners",cat:"Sports & fitness",city:"Patna",area:"Kankarbagh",venue:"Patna Sports Ground",start:at(6,6,30),fee:100,interested:39,vibes:22,org:{name:"Sunday XI",phone:"+91 61200 34343",email:"nets@sundayxi.example"},desc:"Friendly nets session with a coach. Bats, balls and pads are available. No experience needed."},
- {id:"s8",title:"Blood Donation Camp",cat:"Welfare",city:"Patna",area:"Gandhi Maidan",venue:"Red Cross Bhawan",start:at(1,10),fee:0,interested:57,vibes:41,org:{name:"Red Cross Patna",phone:"+91 61200 56565",email:"camp@redcross-patna.example"},desc:"Open to healthy adults aged 18 to 65. Carry a photo ID. Juice and a snack after donating."},
- {id:"s9",title:"Rabindra Sangeet Sandhya",cat:"Cultural",city:"Kolkata",area:"Gariahat",venue:"Rabindra Sadan Lawn",start:at(4,17,30),fee:0,interested:120,vibes:104,org:{name:"Sur Sangam",phone:"+91 33000 21212",email:"hello@sursangam.example"},desc:"A community evening of Tagore songs, open to everyone. Bring a mat if you prefer to sit on the lawn."},
- {id:"s10",title:"Startup Founders Chai Circle",cat:"Social meetup",city:"Pune",area:"Baner",venue:"Cafe Durga, Baner Road",start:at(2,8,30),fee:0,interested:52,vibes:33,org:{name:"Pune Founders",phone:"+91 20000 43434",email:"circle@punefounders.example"},desc:"Informal breakfast for people building things. No pitches, just conversations and introductions."},
- {id:"s11",title:"Intro to Pottery Workshop",cat:"Workshop",city:"Pune",area:"Koregaon Park",venue:"Clay Studio, Lane 6",start:at(7,11),fee:900,interested:44,vibes:36,org:{name:"Clay Studio",phone:"+91 20000 65656",email:"book@claystudio.example"},desc:"Learn wheel basics and take home your own bowl after firing.\nAll materials are included. Limited to 10 seats."},
- {id:"s12",title:"Mumbai Sunrise Run, 5K",cat:"Sports & fitness",city:"Mumbai",area:"Marine Drive",venue:"Start at Air India Building",start:at(6,5,45),fee:0,interested:188,vibes:140,org:{name:"Mumbai Runners",phone:"+91 22000 87878",email:"run@mumbairunners.example"},desc:"An easy-pace 5K along the promenade. Pacers for every speed, and coffee at the finish."},
- {id:"s13",title:"Women in Tech Mixer",cat:"Workshop",city:"Mumbai",area:"Bandra",venue:"The Hub, Linking Road",start:at(9,18,30),fee:250,interested:73,vibes:58,org:{name:"WTM Mumbai",phone:"+91 22000 99011",email:"mixer@wtm.example"},desc:"Short talks followed by open networking. Students and career changers are very welcome."},
- {id:"s14",title:"Smart India Prep Hackathon",cat:"Hackathon",city:"Delhi",area:"Hauz Khas",venue:"IIT Delhi, Seminar Hall",start:at(12,9),fee:0,interested:301,vibes:150,org:{name:"CodeSprint Delhi",phone:"+91 11000 22233",email:"team@codesprint.example"},desc:"A 12-hour sprint for students and early-career developers. Problem statements are shared on the day."}
-];
-var mine=store("hp_mine")||[];
-var S=store("hp_state")||{};
-S.int=S.int||{};S.vibe=S.vibe||{};S.rem=S.rem||{};
-var ui={role:S.role||null,view:"browse",openId:null,city:"all",when:"any",price:"all",cat:"all",q:"",notif:false,pick:!S.role,photo:0,form:{photos:[]},err:"",shareText:null};
-function save(){S.role=ui.role;store("hp_state",S)}
-function all(){return mine.concat(seed)}
-function find(id){return all().filter(function(e){return e.id===id})[0]}
+        <div class="ticket-stack" id="hero-tickets" aria-label="Sample upcoming events"></div>
+      </div>
+    </section>
 
-function fmtDay(ms){return new Date(ms).toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})}
-function fmtTime(ms){return new Date(ms).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit",hour12:true}).replace(" am"," AM").replace(" pm"," PM")}
-function fee(e){return e.fee?"₹"+e.fee:"Free"}
-function cover(e,big){
-  var bg=e.photos&&e.photos[0]?"url("+e.photos[0]+")":CATS[e.cat]||CATS["Social meetup"];
-  return bg}
-function matches(e){
-  var now=Date.now();if(e.start<now-2*36e5)return false;
-  if(ui.city!=="all"&&e.city!==ui.city)return false;
-  if(ui.cat!=="all"&&e.cat!==ui.cat)return false;
-  if(ui.price==="free"&&e.fee>0)return false;
-  if(ui.price==="paid"&&!(e.fee>0))return false;
-  var d=Math.floor((e.start-today.getTime())/DAY),dow=new Date(e.start).getDay();
-  if(ui.when==="today"&&d!==0)return false;
-  if(ui.when==="tomorrow"&&d!==1)return false;
-  if(ui.when==="week"&&d>6)return false;
-  if(ui.when==="weekend"&&!((dow===0||dow===6)&&d<=7))return false;
-  if(ui.when==="month"&&d>30)return false;
-  if(ui.q){var t=(e.title+" "+e.desc+" "+e.area+" "+e.city+" "+e.venue+" "+e.cat).toLowerCase();
-    if(ui.q.toLowerCase().split(/\s+/).some(function(w){return w&&t.indexOf(w)<0}))return false}
-  return true}
-function list(fn){return all().filter(fn).sort(function(a,b){return a.start-b.start})}
-function reminderLabel(k){return k==="2h"?"2 hours before":"1 day before"}
-function dueText(e){var ms=e.start-Date.now();if(ms<0)return"Started";var h=Math.round(ms/36e5);if(h<24)return"Starts in "+h+" hr";var d=Math.round(ms/DAY);return"In "+d+" day"+(d>1?"s":"")}
+    <!-- What Happening does -->
+    <section class="section" id="what-it-does">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">What Happening does</p>
+          <h2>One place to see what your city is up to.</h2>
+          <p class="muted">
+            Most events are shared in group chats and on notice boards, so people miss them.
+            Happening gathers them in one feed you can search and filter.
+          </p>
+        </div>
 
-var ic={
- search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
- bell:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21h4"/></svg>',
- star:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.600 5.800 21l1.400-7L2 9.300l7-.8z"/></svg>',
- spark:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c1 5 4 8 9 10-5 2-8 5-9 10-1-5-4-8-9-10 5-2 8-5 9-10z"/></svg>',
- share:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.600 13.500 6.800 4m0-11-6.800 4"/></svg>'
-};
+        <div class="feature-grid">
+          <article class="feature">
+            <span class="feature-icon" id="icon-find"></span>
+            <h3>Find what is on</h3>
+            <p class="muted">
+              Search by name or place. Filter by city, date and whether an event is free or paid.
+            </p>
+          </article>
+          <article class="feature">
+            <span class="feature-icon" id="icon-save"></span>
+            <h3>Keep track of it</h3>
+            <p class="muted">
+              Tap interested, share with a friend, and set a reminder so you do not forget.
+            </p>
+          </article>
+          <article class="feature">
+            <span class="feature-icon" id="icon-organise"></span>
+            <h3>Reach the right people</h3>
+            <p class="muted">
+              Organisers post photos, details, the fee and a contact, and people nearby find them.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-function card(e){
-  var d=new Date(e.start);
-  return '<button class="card" data-act="open" data-id="'+e.id+'" aria-label="'+esc(e.title)+'">'+
-   '<div class="cover" style="background-image:'+cover(e)+'"><div class="stub"><b>'+d.getDate()+'</b><span>'+d.toLocaleDateString("en-IN",{month:"short"})+'</span></div><span class="cat">'+esc(e.cat)+'</span></div>'+
-   '<div class="body"><h3>'+esc(e.title)+'</h3>'+
-   '<div class="meta">'+fmtDay(e.start)+' · '+fmtTime(e.start)+'</div>'+
-   '<div class="meta">'+esc(e.area)+', '+esc(e.city)+'</div>'+
-   '<div class="row"><span class="pill '+(e.fee?"paid":"free")+'">'+fee(e)+'</span><span class="meta">'+(e.interested+(S.int[e.id]?1:0))+' interested</span></div></div></button>'}
+    <!-- Coming up soon -->
+    <section class="section" id="coming-up">
+      <div class="container">
+        <div class="section-head-row">
+          <div class="section-head">
+            <p class="eyebrow">Coming up soon</p>
+            <h2>New in town? Start with these.</h2>
+          </div>
+          <a class="btn" href="events.html">See all events</a>
+        </div>
+        <div class="card-grid" id="upcoming-grid"></div>
+      </div>
+    </section>
 
-function topbar(){
-  var rc=Object.keys(S.rem).filter(function(id){return find(id)}).length;
-  return '<header class="top"><div class="wrap">'+
-   '<button class="logo" data-act="home" aria-label="Happening home"><span class="dot"></span>Happening</button>'+
-   '<nav class="nav" aria-label="Main">'+
-   '<button class="btn'+(ui.view==="browse"||ui.view==="detail"?" on":"")+'" data-act="go" data-v="browse">Browse</button>'+
-   (ui.role==="org"?'<button class="btn'+(ui.view==="create"?" on":"")+'" data-act="go" data-v="create">Create event</button><button class="btn'+(ui.view==="mine"?" on":"")+'" data-act="go" data-v="mine">My events</button>':"")+
-   '</nav>'+
-   '<button class="btn" data-act="notif" aria-label="Reminders" aria-expanded="'+ui.notif+'">'+ic.bell+(rc?'<span class="badge">'+rc+'</span>':"")+'</button>'+
-   '<button class="btn" data-act="role" title="Switch role">'+(ui.role==="org"?"Organiser":"Browsing")+'</button>'+
-   '</div></header>'}
+    <!-- Categories -->
+    <section class="section" id="categories">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">What you can find</p>
+          <h2>Something for every kind of evening.</h2>
+        </div>
+        <div class="category-grid" id="category-grid"></div>
+      </div>
+    </section>
 
-function notifPanel(){
-  if(!ui.notif)return"";
-  var ids=Object.keys(S.rem).filter(function(id){return find(id)});
-  var evs=ids.map(find).sort(function(a,b){return a.start-b.start});
-  return '<div class="pop"><div class="panel"><h3>Reminders</h3>'+
-   (evs.length?evs.map(function(e){return '<button class="n-item" data-act="open" data-id="'+e.id+'"><b>'+esc(e.title)+'</b><span class="meta">'+dueText(e)+' · reminder '+reminderLabel(S.rem[e.id])+'</span></button>'}).join("")
-   :'<p class="meta" style="margin:0">No reminders yet. Open an event and tap Remind me.</p>')+
-   '<p class="hint" style="margin:6px 0 0">In this preview, reminders show here. Phone and email alerts need the live version.</p></div></div>'}
+    <!-- How it works -->
+    <section class="section" id="how-it-works">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2>Simple for people, simple for organisers.</h2>
+        </div>
 
-function picker(){
-  return '<div class="scrim" role="dialog" aria-modal="true" aria-labelledby="pk"><div class="picker"><h2 id="pk">How will you use Happening?</h2>'+
-   '<p class="meta" style="margin:0">Find what is on around you, or list your own event. You can switch any time.</p>'+
-   '<div class="opts"><button class="opt" data-act="setrole" data-r="org"><b>Organiser</b><span>Post events, add photos, fees and your contact.</span></button>'+
-   '<button class="opt" data-act="setrole" data-r="user"><b>Just here to browse</b><span>Discover events, gatherings and causes near you.</span></button></div></div></div>'}
+        <div class="steps-grid">
+          <div class="panel">
+            <h3>If you are looking for things to do</h3>
+            <ol class="steps">
+              <li><strong>Pick your city</strong>See only what is happening near you.</li>
+              <li><strong>Browse and filter</strong>Narrow by date, price or type of event.</li>
+              <li><strong>Mark interested</strong>Save it, share it and set a reminder.</li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>If you are organising something</h3>
+            <ol class="steps">
+              <li><strong>Sign up as an organiser</strong>It takes a minute.</li>
+              <li><strong>Create your event</strong>Add a title, photos, details, the fee and your contact.</li>
+              <li><strong>Get discovered</strong>People find your event and contact you directly.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function browse(){
-  var evs=list(matches);
-  var cities='<option value="all">All cities</option>'+CITIES.map(function(c){return '<option'+(ui.city===c?" selected":"")+' value="'+c+'">'+c+'</option>'}).join("");
-  var whens=[["any","Any time"],["today","Today"],["tomorrow","Tomorrow"],["week","This week"],["weekend","Weekend"],["month","Next 30 days"]];
-  var wsel=whens.map(function(w){return '<option'+(ui.when===w[0]?" selected":"")+' value="'+w[0]+'">'+w[1]+'</option>'}).join("");
-  var pr=[["all","All"],["free","Free"],["paid","Paid"]].map(function(p){return '<button data-act="price" data-v="'+p[0]+'" aria-pressed="'+(ui.price===p[0])+'">'+p[1]+'</button>'}).join("");
-  var cats=['<button class="chip" data-act="cat" data-v="all" aria-pressed="'+(ui.cat==="all")+'">Everything</button>'].concat(Object.keys(CATS).map(function(c){return '<button class="chip" data-act="cat" data-v="'+esc(c)+'" aria-pressed="'+(ui.cat===c)+'">'+esc(c)+'</button>'})).join("");
-  return '<section class="hero"><h1>Know what is happening around you.</h1><p>Hackathons, cultural nights, meetups and community work in your city. New somewhere? Start here and meet people.</p></section>'+
-   '<div class="search">'+ic.search+'<input id="q" type="search" placeholder="Search events, places or topics" value="'+esc(ui.q)+'" aria-label="Search events"></div>'+
-   '<div class="filters"><select id="city" class="sel" aria-label="City">'+cities+'</select><select id="when" class="sel" aria-label="Date">'+wsel+'</select><div class="seg" role="group" aria-label="Price">'+pr+'</div></div>'+
-   '<div class="chips" role="group" aria-label="Category">'+cats+'</div>'+
-   '<p class="count" id="count" aria-live="polite">'+evs.length+' event'+(evs.length===1?"":"s")+(ui.city!=="all"?" in "+ui.city:"")+'</p>'+
-   '<div class="grid" id="results">'+resultsHtml(evs)+'</div>'}
-function resultsHtml(evs){return evs.length?evs.map(card).join(""):'<div class="empty" style="grid-column:1/-1"><b>Nothing matches yet</b>Try another date or city, or clear the search.</div>'}
+    <!-- Get started -->
+    <section class="section get-started" id="get-started">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Get started</p>
+          <h2>How do you want to use Happening?</h2>
+        </div>
 
-function detail(){
-  var e=find(ui.openId);if(!e)return browse();
-  var imgs=e.photos&&e.photos.length?e.photos:null;
-  var main=imgs?"url("+imgs[Math.min(ui.photo,imgs.length-1)]+")":CATS[e.cat];
-  var thumbs=imgs&&imgs.length>1?'<div class="thumbs">'+imgs.map(function(p,i){return '<button data-act="photo" data-i="'+i+'" aria-label="Photo '+(i+1)+'" aria-current="'+(i===ui.photo)+'" style="background-image:url('+p+')"></button>'}).join("")+'</div>':"";
-  var on=!!S.int[e.id],vb=!!S.vibe[e.id],rm=S.rem[e.id];
-  var more=list(function(x){return x.id!==e.id&&x.city===e.city&&x.start>Date.now()-2*36e5}).slice(0,6);
-  var d=new Date(e.start);
-  return '<button class="btn back" data-act="go" data-v="browse">← All events</button>'+
-   '<div class="detail"><div><div class="hero-img" style="background-image:'+main+'"><div class="stub"><b>'+d.getDate()+'</b><span>'+d.toLocaleDateString("en-IN",{month:"short"})+'</span></div><span class="cat">'+esc(e.cat)+'</span></div>'+thumbs+
-   '<div style="margin-top:20px;display:grid;gap:10px"><h2 style="font-size:1.3rem">About this event</h2><p class="desc" style="margin:0">'+esc(e.desc)+'</p></div></div>'+
-   '<aside class="panel"><h1>'+esc(e.title)+'</h1>'+
-   '<ul class="facts"><li><span>When</span><span>'+fmtDay(e.start)+', '+fmtTime(e.start)+'</span></li><li><span>Where</span><span>'+esc(e.venue)+', '+esc(e.area)+', '+esc(e.city)+'</span></li><li><span>Fee</span><span><span class="pill '+(e.fee?"paid":"free")+'">'+fee(e)+'</span>'+(e.fee?' <span class="hint">pay the organiser directly</span>':"")+'</span></li><li><span>By</span><span>'+esc(e.org.name)+'</span></li></ul>'+
-   '<div class="actions"><button class="btn'+(on?" on":"")+'" data-act="int" data-id="'+e.id+'" aria-pressed="'+on+'">'+ic.star+(on?"Interested":"I am interested")+' · '+(e.interested+(on?1:0))+'</button>'+
-   '<button class="btn'+(vb?" on vibe":"")+'" data-act="vibe" data-id="'+e.id+'" aria-pressed="'+vb+'">'+ic.spark+'Good vibes · '+(e.vibes+(vb?1:0))+'</button>'+
-   '<button class="btn" data-act="share" data-id="'+e.id+'">'+ic.share+'Share</button></div>'+
-   (ui.shareText?'<div class="field"><label for="sh">Copy this and send it</label><input id="sh" readonly value="'+esc(ui.shareText)+'"></div>':"")+
-   '<div class="field"><label for="rem">Reminder</label><select id="rem" data-id="'+e.id+'"><option value="">No reminder</option><option value="1d"'+(rm==="1d"?" selected":"")+'>1 day before</option><option value="2h"'+(rm==="2h"?" selected":"")+'>2 hours before</option></select></div>'+
-   '<div class="contact"><b>Get more info</b><span class="meta">Contact '+esc(e.org.name)+' directly.</span><span><code>'+esc(e.org.phone)+'</code></span><span><code>'+esc(e.org.email)+'</code></span></div>'+
-   '<div class="soon">Comments are coming soon, so you will be able to ask questions here.</div></aside></div>'+
-   '<section class="more"><h2>More events in '+esc(e.city)+'</h2>'+(more.length?'<div class="grid">'+more.map(card).join("")+'</div>':'<div class="empty"><b>This is the only event in '+esc(e.city)+' right now</b>Check back soon.</div>')+'</section>'}
+        <div class="role-grid">
+          <article class="role-card">
+            <h3>I am an organiser</h3>
+            <ul>
+              <li>List events, workshops and drives</li>
+              <li>Add photos, a fee and your contact</li>
+              <li>Reach people who are new to the city</li>
+            </ul>
+            <a class="btn btn-primary" id="start-organiser" href="login.html?mode=signup&amp;role=organiser">Sign up as organiser</a>
+          </article>
 
-function create(){
-  var f=ui.form,min=new Date(today.getTime()+DAY),iso=function(t){var x=new Date(t);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0")};
-  return '<form class="form" id="evform" novalidate style="padding-top:22px"><h1>List an event</h1><p class="meta" style="margin:0">People near you will see this on Happening. You handle sign-ups and payment yourself.</p>'+
-   '<div class="field"><label for="f-title">Title</label><input id="f-title" required maxlength="80" placeholder="Weekend trek to Rajgir hills"></div>'+
-   '<div class="two"><div class="field"><label for="f-cat">Category</label><select id="f-cat">'+Object.keys(CATS).map(function(c){return '<option>'+esc(c)+'</option>'}).join("")+'</select></div>'+
-   '<div class="field"><label for="f-city">City</label><select id="f-city">'+CITIES.map(function(c){return '<option>'+c+'</option>'}).join("")+'</select></div></div>'+
-   '<div class="two"><div class="field"><label for="f-area">Area</label><input id="f-area" required placeholder="Kankarbagh"></div><div class="field"><label for="f-venue">Venue</label><input id="f-venue" required placeholder="Patna Sports Ground"></div></div>'+
-   '<div class="two"><div class="field"><label for="f-date">Date</label><input id="f-date" type="date" required min="'+iso(today.getTime())+'" value="'+iso(min)+'"></div><div class="field"><label for="f-time">Start time</label><input id="f-time" type="time" required value="18:00"></div></div>'+
-   '<div class="field"><label for="f-fee">Event fee in ₹</label><input id="f-fee" type="number" min="0" step="10" value="0"><span class="hint">Enter 0 for a free event.</span></div>'+
-   '<div class="field"><label for="f-desc">Description</label><textarea id="f-desc" rows="5" required placeholder="What will happen, who it is for, what to bring."></textarea></div>'+
-   '<div class="field"><label for="f-photos">Photos</label><input id="f-photos" type="file" accept="image/*" multiple><div class="previews">'+f.photos.map(function(p){return '<div style="background-image:url('+p+')"></div>'}).join("")+'</div><span class="hint">Up to 4 photos. The first one becomes the cover.</span></div>'+
-   '<div class="two"><div class="field"><label for="f-oname">Organiser name</label><input id="f-oname" required></div><div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" placeholder="+91 …"></div></div>'+
-   '<div class="field"><label for="f-email">Email</label><input id="f-email" type="email" placeholder="you@example.com"><span class="hint">Add at least a phone or an email so people can ask you questions.</span></div>'+
-   '<div class="err" id="err" role="alert"></div><div><button class="btn primary" type="submit">Publish event</button></div></form>'}
+          <article class="role-card">
+            <h3>I am just here to browse</h3>
+            <ul>
+              <li>Find events and gatherings near you</li>
+              <li>Save the ones you like</li>
+              <li>Get reminders before they start</li>
+            </ul>
+            <a class="btn btn-primary" id="start-browse" href="login.html?mode=signup">Create a free account</a>
+          </article>
+        </div>
 
-function minePage(){
-  var evs=mine.slice().sort(function(a,b){return a.start-b.start});
-  return '<div style="padding-top:22px"><h1 style="font-size:2rem;margin-bottom:12px">My events</h1>'+
-   (evs.length?'<div class="grid">'+evs.map(card).join("")+'</div>':'<div class="empty"><b>You have not listed anything yet</b>Use Create event to publish your first one.<br><br><button class="btn primary" data-act="go" data-v="create">Create event</button></div>')+'</div>'}
+        <p class="get-started-foot">
+          No account needed to look around. <a href="events.html">Browse events now</a>.
+        </p>
+      </div>
+    </section>
+  </main>
 
-function toast(m){var t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2200)}
+  <footer id="site-footer"></footer>
 
-function render(){
-  var v=ui.view==="detail"?detail():ui.view==="create"&&ui.role==="org"?create():ui.view==="mine"&&ui.role==="org"?minePage():browse();
-  var app=document.getElementById("app"),keep=document.activeElement&&document.activeElement.id;
-  app.innerHTML=topbar()+notifPanel()+'<main class="wrap">'+v+'</main>'+(ui.pick?picker():"");
-  if(keep==="q"){var q=document.getElementById("q");if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}
-}
-function updateResults(){var evs=list(matches);document.getElementById("results").innerHTML=resultsHtml(evs);document.getElementById("count").textContent=evs.length+" event"+(evs.length===1?"":"s")+(ui.city!=="all"?" in "+ui.city:"")}
-
-function shrink(file,cb){
-  var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
-    var m=900,s=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
-    c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.8))};im.onerror=function(){cb(null)};im.src=r.result};r.readAsDataURL(file)}
-
-document.addEventListener("click",function(ev){
-  var b=ev.target.closest("[data-act]");
-  if(ui.notif&&!ev.target.closest(".pop")&&!(b&&b.dataset.act==="notif")){ui.notif=false;if(!b){render();return}}
-  if(!b)return;
-  var a=b.dataset.act,id=b.dataset.id;
-  if(a==="home"){ui.view="browse";ui.q="";ui.city="all";ui.when="any";ui.price="all";ui.cat="all"}
-  else if(a==="go"){ui.view=b.dataset.v;ui.shareText=null}
-  else if(a==="open"){ui.openId=id;ui.view="detail";ui.photo=0;ui.notif=false;ui.shareText=null;window.scrollTo(0,0)}
-  else if(a==="notif"){ui.notif=!ui.notif}
-  else if(a==="role"){ui.pick=true}
-  else if(a==="setrole"){ui.role=b.dataset.r;ui.pick=false;if(ui.role!=="org"&&(ui.view==="create"||ui.view==="mine"))ui.view="browse";save()}
-  else if(a==="price"){ui.price=b.dataset.v}
-  else if(a==="cat"){ui.cat=b.dataset.v}
-  else if(a==="photo"){ui.photo=+b.dataset.i}
-  else if(a==="int"){if(S.int[id])delete S.int[id];else{S.int[id]=1;toast("Saved to your interests")}save()}
-  else if(a==="vibe"){if(S.vibe[id])delete S.vibe[id];else S.vibe[id]=1;save()}
-  else if(a==="share"){
-    var e=find(id),t=e.title+" · "+fmtDay(e.start)+", "+fmtTime(e.start)+" · "+e.area+", "+e.city+" (via Happening)";
-    var ok=function(){ui.shareText=null;toast("Details copied");render()},no=function(){ui.shareText=t;render();var i=document.getElementById("sh");if(i){i.focus();i.select()}};
-    try{navigator.clipboard.writeText(t).then(ok,no)}catch(x){no()}return}
-  render()});
-document.addEventListener("input",function(ev){if(ev.target.id==="q"){ui.q=ev.target.value;updateResults()}});
-document.addEventListener("change",function(ev){
-  var t=ev.target;
-  if(t.id==="city"){ui.city=t.value;updateResults()}
-  else if(t.id==="when"){ui.when=t.value;updateResults()}
-  else if(t.id==="rem"){var id=t.dataset.id;if(t.value){S.rem[id]=t.value;toast("Reminder set: "+reminderLabel(t.value))}else delete S.rem[id];save();render()}
-  else if(t.id==="f-photos"){
-    var files=Array.prototype.slice.call(t.files,0,4),out=[],n=0;
-    if(!files.length)return;
-    files.forEach(function(f,i){shrink(f,function(d){out[i]=d;if(++n===files.length){ui.form.photos=out.filter(Boolean);snapForm();render();restoreForm()}})})}
-  else if(t.closest&&t.closest(".chips,.seg")){}
-});
-var snap={};
-function snapForm(){["title","cat","city","area","venue","date","time","fee","desc","oname","phone","email"].forEach(function(k){var el=document.getElementById("f-"+k);if(el)snap[k]=el.value})}
-function restoreForm(){Object.keys(snap).forEach(function(k){var el=document.getElementById("f-"+k);if(el)el.value=snap[k]})}
-document.addEventListener("submit",function(ev){
-  if(ev.target.id!=="evform")return;ev.preventDefault();
-  var g=function(k){return document.getElementById("f-"+k).value.trim()},err=document.getElementById("err");
-  var miss=[["title","a title"],["area","an area"],["venue","a venue"],["desc","a description"],["oname","the organiser name"]].filter(function(p){return!g(p[0])})[0];
-  if(miss){err.textContent="Please add "+miss[1]+".";return}
-  if(!g("phone")&&!g("email")){err.textContent="Add a phone number or an email so people can reach you.";return}
-  var p=g("date").split("-"),tm=g("time").split(":");
-  if(p.length<3||tm.length<2){err.textContent="Pick a date and a start time.";return}
-  var start=new Date(+p[0],+p[1]-1,+p[2],+tm[0],+tm[1]).getTime();
-  if(start<Date.now()){err.textContent="The start time has already passed. Pick a later time.";return}
-  var e={id:"m"+Date.now(),title:g("title"),cat:g("cat"),city:g("city"),area:g("area"),venue:g("venue"),start:start,fee:Math.max(0,parseInt(g("fee"),10)||0),interested:0,vibes:0,photos:ui.form.photos,org:{name:g("oname"),phone:g("phone")||"Not shared",email:g("email")||"Not shared"},desc:g("desc")};
-  mine.unshift(e);
-  try{store("hp_mine",mine)}catch(x){}
-  if(e.photos.length&&!store("hp_mine")){e.photos=[];toast("Event published without photos (storage is full)")}else toast("Event published");
-  ui.form={photos:[]};snap={};ui.view="mine";window.scrollTo(0,0);render()});
-document.addEventListener("keydown",function(ev){if(ev.key==="Escape"&&(ui.notif)){ui.notif=false;render()}});
-render();
-})();
-</script>
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/helpers.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>
